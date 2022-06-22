@@ -1,9 +1,28 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+
+class WeatherForecast {
+  date: string = "";
+  temperatureC: number = 0;
+  temperatureF: number = 0;
+  summary: number = 0;
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [weather, setWeather] = useState<WeatherForecast[]>([]);
+
+  useEffect(() => {
+    const func = async () => {
+      const w = (await fetch("/api/WeatherForecast").then((r) =>
+        r.json()
+      )) as WeatherForecast[];
+      setWeather(w);
+    };
+
+    func();
+  }, []);
 
   return (
     <div className="App">
@@ -27,7 +46,7 @@ function App() {
           >
             Learn React
           </a>
-          {' | '}
+          {" | "}
           <a
             className="App-link"
             href="https://vitejs.dev/guide/features.html"
@@ -37,9 +56,20 @@ function App() {
             Vite Docs
           </a>
         </p>
+        <div>
+          <ul>
+            {weather.map((w, index) => {
+              return (
+                <li key={index}>
+                  <span>{w.summary}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </header>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
